@@ -1,0 +1,244 @@
+#include "tank.h"
+
+//analog joystick dead zone
+const int JOYSTICK_DEAD_ZONE = 8000;
+
+//tank creation
+Tank::Tank(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, float x, float y)
+{
+	//active the plater
+	active = true;
+
+	//set the player number 0 or 1
+	playerNum = pNum;
+
+	//set float for player speed
+	speed = 200.0f;
+
+	//tank firing sound
+	fire = Mix_LoadWAV((audioPath + "fire.wav").c_str());
+
+	//see if this is player 1 or 2
+	if(playerNum == 0){
+		//create red tank texture
+		playerPath = filePath + "tank.png";
+	}else{
+		//create the blue tank texture
+		playerPath = filePath +"tank2.png";
+	}
+
+	//load the surface into the teture
+	texture = IMG_LoadTexture(renderer, playerPath.c_str());
+
+	//set the SDL_Rext X and Y for the player
+	posRect.x = x;
+	posRect.y = y;
+
+	//use SDL_Querytexture to get the w and h of players texture
+	int w, h;
+	SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+	posRect.w = w;
+	posRect.h = h;
+
+	//set the movments floats to the players original x and y
+	pos_X = x;
+	pos_Y = y;
+
+	//set the xdir and ydir
+	xDir=0;
+	yDir=0;
+
+	//set the initial values so tank cn shoot
+	xDirOld=1;
+	yDirOld=0;
+
+	//center of inamge rectangel
+	center.x= posRect.w/2;
+	center.y= posRect.h/2;
+
+	//string to create the path to the players pullet image
+	string bulletPath;
+
+	//see if this is player 1 or 2
+	if(playerNum == 0){
+		//create red tank texture
+		playerPath = filePath + "tank.png";
+	}else{
+		//create the blue tank texture
+		playerPath = filePath +"tank2.png";
+	}
+
+	//dcreate player bullets
+	for(int i = 0; i <10; i++)
+	{
+		//creat the bullet and move offscreen out of the game play area
+		//TankBullet tmpBullet(renderer, bulletPath, -1000, -1000, 0,0);
+
+		//add to bulletlist
+		//bulletList.push_back(tmpBullet);
+	}
+
+}
+
+//tank draw mtehod
+void Tank::Draw(SDL_Renderer *renderer)
+{
+	/*
+	//draw the enemies
+	for(int i = 0; i <bulletList.size(); i++)
+	{
+		//check see if bullet acitve
+		if(bulletList[i].active){
+
+			//draw bullet
+				bulletList[i].Draw(renderer);
+		}
+	}
+	 */
+
+	//draw the player texture using the cars texture and posRext
+	SDL_RenderCopy(renderer,texture, NULL, &posRect, tankangle, &center, SDL_FLIP_NONE);
+}
+
+//tank update method
+void Tank::Update(float deltaTime)
+{
+	//check for gamepad iput
+	if(XDir != 0 || yDir !=0){
+		//get the angle between the tank and the turret
+		x=posRect.x = xDir;
+		y=posRect.y = yDir;
+		tankangle = atan2(yDir, xDir)*180/3.14;
+		//ajust position floats based on speed direction of joystick and deltatime
+		oldAngle = tankangle;
+		xDirOld= xDir;
+		yDirOld=yDir;
+	} else{
+		tankangle = oldAngle;
+	}
+
+	//ajust position floats based on speed direction of joystick and deltatime
+	pos_X += (speed * xDir) * deltaTime;
+	pos_Y += (speed * yDir) * deltaTime;
+
+	//uypdate player positon wuth code to account for precision loss
+	posRect.x=(int)(pos_X + 0.5f);
+	posRect.y=(int)(pos_Y + 0.5f);
+
+	if(posRect.x < 0){
+		posRect.x = 0;
+		pos_X = posRect.x;
+	}
+
+	if(posRect.x > 1024 - posRect.w){
+		posRect.x = 1024 - posRect.w;
+		pos_X = posRect.x;
+	}
+
+	if(posRect.y<0){
+		posRect.y = 0;
+		pos_Y=posRect.y;
+	}
+
+	if(posRect.y > 768 - posRect.h){
+		posRect.y = 768 - posRect.h;
+		pos_Y= posRect.y;
+	}
+
+
+	//Update the players bullets
+	/*
+			for(int i = 0; i < bulletList.size(); i++){
+
+				if(bulletList[i].active){
+
+				bulletList[i].Update(deltaTime);
+
+				}
+		}
+	 */
+
+
+}
+
+//tank joystick axis method
+void Tank::OnControllerAxis(const SDL_ControllerAxisEvent event)
+{
+	//axis movement and button presses both sent here as SDL_CONTROLLERAXISEVERNT end
+	//if the players number is 0 and the joystick axis from joystick 0
+	if (event.which == 0 && playerNum == 0)
+	{
+		//x axis
+		if(event.axis == 0)
+		{
+			if(event.value < -JOYSTICK_DEAD_ZONE)
+			{
+				xDir = -1.0f; //LEFT
+			}
+			else if(event.value > JOYSTICK_DEAD_ZONE)
+			{
+				xDir = 1.0f; //RiGHT
+			}
+			else
+			{
+				xDir = 0.0f; //NONBE
+			}
+		}
+
+		//y axis
+		if(event.axis==1)
+		{
+
+			if(event.value < -JOYSTICK_DEAD_ZONE)
+			{
+				yDir = -1.0f; //DOWN
+			}
+			else if(event.value > JOYSTICK_DEAD_ZONE)
+			{
+				yDir = 1.0f; //UP
+			}
+			else
+			{
+				yDir = 0.0f; //NONE
+			}
+		}
+	}
+
+	//if the players number is 0 and the joystick axis from joystick 0
+	if(event.which ==1 && playerNum == 1){
+
+		//x axis
+		if(event.axis==0)
+		{
+			if(event.value < -JOYSTICK_DEAD_ZONE)
+			{
+				xDir = -1.0f; //LEFT
+			}
+			else if(event.value > JOYSTICK_DEAD_ZONE)
+			{
+				xDir = 1.0f; //RiGHT
+			}
+			else
+			{
+				xDir = 0.0f; //NONBE
+			}
+		}
+
+		//y axis
+		if(event.axis ==1)
+		{
+			if(event.value < -JOYSTICK_DEAD_ZONE)
+			{
+				yDir = -1.0f; //DOWN
+			}
+			else if(event.value > JOYSTICK_DEAD_ZONE)
+			{
+				yDir = 1.0f; //UP
+			}
+			else{
+				yDir = 0.0f; //NONE
+			}
+
+		}
+	}
+}
