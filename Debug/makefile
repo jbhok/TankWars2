@@ -44,7 +44,7 @@ all: TankWars2
 TankWars2: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MacOS X C++ Linker'
-	g++  -o "TankWars2" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_ttf -framework Cocoa -o "TankWars2" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

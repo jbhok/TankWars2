@@ -12,16 +12,16 @@ const int SCREEN_HEIGHT = 768;
 //deltaTime car initialization - for frame rate independence
 float deltaTime = 0.0;
 int thisTime = 0;
-int LastTime = 0;
+int lastTime = 0;
 
 #include "tank.h"
 #include "turret.h"
 
 #if defined (__APPLE__)
-#include <SDL2/SDL.h>
-#include <SDL2_image/SDL_image.h>
-#include <SDL2_mixer/SDL_mixer.h>
-#include <SDL2_ttf/SDL_ttf.h>
+#include "SDL2/SDL.h"
+#include "SDL2_image/SDL_image.h"
+#include "SDL2_mixer/SDL_mixer.h"
+#include "SDL2_ttf/SDL_ttf.h"
 
 string currentWorkingDirectory (getcwd(NULL,0));
 string images_dir = currentWorkingDirectory + "/src/";
@@ -109,6 +109,8 @@ int main(){
 	//cREATE PLAYERS START*******************************************
 	Tank tank1 = Tank(renderer, 0, images_dir.c_str(), audio_dir.c_str(), 50.0f,50.0f);
 
+	//cREATE TURRET START*******************************************
+	Turret turret1 = Turret(renderer, 0, images_dir.c_str(), audio_dir.c_str(), 800.0f, 800.0f);
 
 	// MAIN GAME LOOP START ************
 
@@ -129,13 +131,13 @@ int main(){
 			}
 
 			switch (e.type){
-
 			case SDL_CONTROLLERBUTTONDOWN:
 
 				if(e.cdevice.which == 0){
 
 					if(e.cbutton.button == SDL_CONTROLLER_BUTTON_A){
 
+						tank1.OnControllerButton(e.cbutton);
 						break;
 					}
 				}
@@ -144,9 +146,10 @@ int main(){
 
 			case SDL_CONTROLLERAXISMOTION:
 
-				//tank1.OnControllerAxis(e.caxis);
+				tank1.OnControllerAxis(e.caxis);
 
 				break;
+
 			}
 
 		}//POLL EVENT
@@ -154,13 +157,19 @@ int main(){
 		//update player 1 tank************************************
 		tank1.Update(deltaTime);
 
-		//draw selections
+		turret1.Update(deltaTime, tank1.posRect);
+
+
+		//draw player 1 tank************************************
 		//claer the SDL RenderTarget
 		SDL_RenderClear(renderer);
-//draw the tank
+		//draw the tank
 		tank1.Draw(renderer);
-//present new buffer to screen
+		//draw the tuuret
+		turret1.Draw(renderer);
+		//present new buffer to screen
 		SDL_RenderPresent(renderer);
+
 
 	}// end main loop
 
@@ -171,4 +180,5 @@ int main(){
 	SDL_Quit();
 
 	return 0;
+
 }

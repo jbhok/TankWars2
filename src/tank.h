@@ -6,10 +6,10 @@ using namespace std;
 #include <vector>
 
 #if defined (__APPLE__)
-#include <SDL2/SDL.h>
-#include <SDL2_image/SDL_image.h>
-#include <SDL2_mixer/SDL_mixer.h>
-#include <SDL2_ttf/SDL_ttf.h>
+#include "SDL2/SDL.h"
+#include "SDL2_image/SDL_image.h"
+#include "SDL2_mixer/SDL_mixer.h"
+#include "SDL2_ttf/SDL_ttf.h"
 #endif
 
 #if defined(_WIN32) || (_WIN64)
@@ -26,7 +26,7 @@ using namespace std;
 #include "SDL2_ttf/SDL_ttf.h"
 #endif
 
-//#include "tankbullet.h"
+#include "tankbullet.h"
 
 class Tank{
 
@@ -36,7 +36,7 @@ public:
 	bool active;
 
 	//variable to hold the list of bullets
-	//vector<TankBullet> bulletList;
+	vector<TankBullet> bulletList;
 
 	//string to thold the path to the platyers texture
 	string playerPath;
@@ -94,4 +94,4 @@ public:
 private:
 
 	void CreateBullet();
-}
+};

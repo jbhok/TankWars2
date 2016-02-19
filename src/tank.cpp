@@ -72,10 +72,10 @@ Tank::Tank(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, 
 	for(int i = 0; i <10; i++)
 	{
 		//creat the bullet and move offscreen out of the game play area
-		//TankBullet tmpBullet(renderer, bulletPath, -1000, -1000, 0,0);
+		TankBullet tmpBullet(renderer, bulletPath, -1000, -1000, 0,0);
 
 		//add to bulletlist
-		//bulletList.push_back(tmpBullet);
+		bulletList.push_back(tmpBullet);
 	}
 
 }
@@ -83,7 +83,7 @@ Tank::Tank(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, 
 //tank draw mtehod
 void Tank::Draw(SDL_Renderer *renderer)
 {
-	/*
+
 	//draw the enemies
 	for(int i = 0; i <bulletList.size(); i++)
 	{
@@ -91,20 +91,20 @@ void Tank::Draw(SDL_Renderer *renderer)
 		if(bulletList[i].active){
 
 			//draw bullet
-				bulletList[i].Draw(renderer);
+			bulletList[i].Draw(renderer);
 		}
 	}
-	 */
+
 
 	//draw the player texture using the cars texture and posRext
-	SDL_RenderCopy(renderer,texture, NULL, &posRect, tankangle, &center, SDL_FLIP_NONE);
+	SDL_RenderCopy(renderer, texture, NULL, &posRect, tankangle, &center, SDL_FLIP_NONE);
 }
 
 //tank update method
 void Tank::Update(float deltaTime)
 {
 	//check for gamepad iput
-	if(XDir != 0 || yDir !=0){
+	if(xDir != 0 || yDir !=0){
 		//get the angle between the tank and the turret
 		x=posRect.x = xDir;
 		y=posRect.y = yDir;
@@ -130,6 +130,7 @@ void Tank::Update(float deltaTime)
 		pos_X = posRect.x;
 	}
 
+
 	if(posRect.x > 1024 - posRect.w){
 		posRect.x = 1024 - posRect.w;
 		pos_X = posRect.x;
@@ -147,16 +148,15 @@ void Tank::Update(float deltaTime)
 
 
 	//Update the players bullets
-	/*
-			for(int i = 0; i < bulletList.size(); i++){
+	for(int i = 0; i < bulletList.size(); i++)
+	{
+		//check to see if the bullet is active
+		if(bulletList[i].active){
 
-				if(bulletList[i].active){
-
-				bulletList[i].Update(deltaTime);
-
-				}
+			//update bullet
+			bulletList[i].Update(deltaTime);
 		}
-	 */
+	}
 
 
 }
@@ -238,7 +238,79 @@ void Tank::OnControllerAxis(const SDL_ControllerAxisEvent event)
 			else{
 				yDir = 0.0f; //NONE
 			}
+		}
+	}
+}
 
+//tank joystick button method
+void Tank::OnControllerButton(const SDL_ControllerButtonEvent event)
+{
+	//if the players number is 0 and the joystick button is from joystick 0
+	if(event.which == 0 && playerNum == 0)
+	{
+		//if A button
+		if(event.button == 0)
+		{
+			//create bullet
+			CreateBullet();
+		}
+	}
+
+	//if the players number is 1 and the joystick button is from joystick 1
+	if(event.which == 1 && playerNum == 1)
+	{
+		// if A button
+		if(event.button == 0)
+		{
+			//create bullet
+			CreateBullet();
+
+		}
+	}
+}
+
+//create a bullet
+void Tank::CreateBullet(){
+
+	//see if there is a bullet active to fire
+	for(int i = 0; i < bulletList.size(); i++)
+	{
+		//see if the bullet is not active
+		if(bulletList[i].active == false){
+
+			//player over sound
+			Mix_PlayChannel(-1, fire, 0);
+
+			//set bullet to active
+			bulletList[i].active = true;
+
+			//use some math in the x position to get the bullet close
+			//to the center of the player using player width
+			bulletList[i].posRect.x = (posRect.x + (posRect.w/2));
+			bulletList[i].posRect.y = (posRect.y + (posRect.h/2));
+
+			//finish aligning to the player center using the texture width
+			bulletList[i].posRect.x = bulletList[i].posRect.x -(bulletList[i].posRect.w/2);
+			bulletList[i].posRect.y = bulletList[i].posRect.y -(bulletList[i].posRect.h/2);
+
+			//set the x and y position of the bullets float positons
+			bulletList[i].pos_X = bulletList[i].posRect.x;
+			bulletList[i].pos_Y = bulletList[i].posRect.y ;
+
+			//if the tank is moving fire in the direction
+			if(xDir != 0 || yDir != 0){
+				//set the x and y posiiotn
+				bulletList[i].xDir = xDir;
+				bulletList[i].yDir = yDir;
+			}else{
+				//if the tank is not moving
+				//set the x and y posoitino
+				bulletList[i].xDir = xDirOld;
+				bulletList[i].yDir = yDirOld;
+			}
+
+			//one hte bullt is found
+			break;
 		}
 	}
 }
