@@ -7,19 +7,22 @@ CPP_SRCS += \
 ../src/TankWars2.cpp \
 ../src/tank.cpp \
 ../src/tankbullet.cpp \
-../src/turret.cpp 
+../src/turret.cpp \
+../src/turretbullet.cpp 
 
 OBJS += \
 ./src/TankWars2.o \
 ./src/tank.o \
 ./src/tankbullet.o \
-./src/turret.o 
+./src/turret.o \
+./src/turretbullet.o 
 
 CPP_DEPS += \
 ./src/TankWars2.d \
 ./src/tank.d \
 ./src/tankbullet.d \
-./src/turret.d 
+./src/turret.d \
+./src/turretbullet.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

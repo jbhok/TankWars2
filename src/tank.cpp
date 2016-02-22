@@ -104,19 +104,35 @@ void Tank::Draw(SDL_Renderer *renderer)
 void Tank::Update(float deltaTime)
 {
 	//check for gamepad iput
-	if(xDir != 0 || yDir !=0){
+	if(Xvalue != 0 || Yvalue !=0){
 		//get the angle between the tank and the turret
-		x=posRect.x = xDir;
-		y=posRect.y = yDir;
-		tankangle = atan2(yDir, xDir)*180/3.14;
+		//x=posRect.x = xDir;
+		//y=posRect.y = yDir;
+		tankangle = atan2(Yvalue, Xvalue)*180/3.14;
 		//ajust position floats based on speed direction of joystick and deltatime
 		oldAngle = tankangle;
-		xDirOld= xDir;
-		yDirOld=yDir;
+		//xDirOld= xDir;
+		//yDirOld=yDir;
+
+		//gives us radians
+		float radians = (tankangle * 3.14) / 180;
+
+		//get x and y
+		float move+x = speed * cos (radians);
+		float move_y = speed * sin (radians);
+
+		//update flaots for precision loss
+		pos_X += (move_x) * deltaTime;
+		pos_Y += (move_y) * deltaTime;
+
+		//update [a;lyer [osotion with code to account forp recision loss
+		posRect.x = (int)(pos_X + 0.5f);
+		posRect.y = (int)(pos_Y + 0.5f);
+
 	} else{
 		tankangle = oldAngle;
 	}
-
+/*
 	//ajust position floats based on speed direction of joystick and deltatime
 	pos_X += (speed * xDir) * deltaTime;
 	pos_Y += (speed * yDir) * deltaTime;
@@ -124,7 +140,7 @@ void Tank::Update(float deltaTime)
 	//uypdate player positon wuth code to account for precision loss
 	posRect.x=(int)(pos_X + 0.5f);
 	posRect.y=(int)(pos_Y + 0.5f);
-
+*/
 	if(posRect.x < 0){
 		posRect.x = 0;
 		pos_X = posRect.x;
@@ -162,84 +178,21 @@ void Tank::Update(float deltaTime)
 }
 
 //tank joystick axis method
-void Tank::OnControllerAxis(const SDL_ControllerAxisEvent event)
+void Tank::OnControllerAxis(Sint16 X, Sint16 Y)
 {
-	//axis movement and button presses both sent here as SDL_CONTROLLERAXISEVERNT end
-	//if the players number is 0 and the joystick axis from joystick 0
-	if (event.which == 0 && playerNum == 0)
+
+	Xvalue =X;
+	Yvalue=Y;
+
+	if(!(Xvalue < -JOYSTICK_DEAD_ZONE) && !(Xvalue > JOYSTICK_DEAD_ZONE))
 	{
-		//x axis
-		if(event.axis == 0)
-		{
-			if(event.value < -JOYSTICK_DEAD_ZONE)
-			{
-				xDir = -1.0f; //LEFT
-			}
-			else if(event.value > JOYSTICK_DEAD_ZONE)
-			{
-				xDir = 1.0f; //RiGHT
-			}
-			else
-			{
-				xDir = 0.0f; //NONBE
-			}
-		}
-
-		//y axis
-		if(event.axis==1)
-		{
-
-			if(event.value < -JOYSTICK_DEAD_ZONE)
-			{
-				yDir = -1.0f; //DOWN
-			}
-			else if(event.value > JOYSTICK_DEAD_ZONE)
-			{
-				yDir = 1.0f; //UP
-			}
-			else
-			{
-				yDir = 0.0f; //NONE
-			}
-		}
+		Xvalue = 0.0f;
 	}
 
-	//if the players number is 0 and the joystick axis from joystick 0
-	if(event.which ==1 && playerNum == 1){
-
-		//x axis
-		if(event.axis==0)
-		{
-			if(event.value < -JOYSTICK_DEAD_ZONE)
-			{
-				xDir = -1.0f; //LEFT
-			}
-			else if(event.value > JOYSTICK_DEAD_ZONE)
-			{
-				xDir = 1.0f; //RiGHT
-			}
-			else
-			{
-				xDir = 0.0f; //NONBE
-			}
+	if(!(Yvalue < -JOYSTICK_DEAD_ZONE) && !(Yvalue > JOYSTICK_DEAD_ZONE))
+	{
+			Yvalue = 0.0f;
 		}
-
-		//y axis
-		if(event.axis ==1)
-		{
-			if(event.value < -JOYSTICK_DEAD_ZONE)
-			{
-				yDir = -1.0f; //DOWN
-			}
-			else if(event.value > JOYSTICK_DEAD_ZONE)
-			{
-				yDir = 1.0f; //UP
-			}
-			else{
-				yDir = 0.0f; //NONE
-			}
-		}
-	}
 }
 
 //tank joystick button method
@@ -300,13 +253,13 @@ void Tank::CreateBullet(){
 			//if the tank is moving fire in the direction
 			if(xDir != 0 || yDir != 0){
 				//set the x and y posiiotn
-				bulletList[i].xDir = xDir;
-				bulletList[i].yDir = yDir;
+				bulletList[i].tankangle = tankangle;
+
 			}else{
 				//if the tank is not moving
 				//set the x and y posoitino
-				bulletList[i].xDir = xDirOld;
-				bulletList[i].yDir = yDirOld;
+				bulletList[i].tankangle = oldAngle;
+
 			}
 
 			//one hte bullt is found

@@ -25,7 +25,7 @@ using namespace std;
 #include "SDL2_ttf/SDL_ttf.h"
 #endif
 
-//#include "turretbullet.h"
+#include "turretbullet.h"
 class Turret{
 
 public:
@@ -33,7 +33,7 @@ public:
 	bool active;
 
 	//variable to hold the list of bullets
-	//vector<TurretBullet> bulletList;
+	vector<TurretBullet> bulletList;
 
 	//string to thold the path to the platyers texture
 	string playerPath;

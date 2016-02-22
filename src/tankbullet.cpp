@@ -57,18 +57,26 @@ void TankBullet::Draw(SDL_Renderer * renderer)
 //bullet update method
 void TankBullet::Update(float deltaTime){
 
-		//adjust position floats based on speed, direction(-1 for up), and deltaTime
-		pos_X += (speed * xDir) *deltaTime;
-		pos_Y += (speed * yDir) *deltaTime;
+	//adjust position floats based on speed, direction(-1 for up), and deltaTime
+	//pos_X += (speed * xDir) *deltaTime;
+	//pos_Y += (speed * yDir) *deltaTime;
 
-		//Update bullet posiiton with code to axount for precision loss
-		posRect.x = (int) (pos_X + 0.5f);
-		posRect.y = (int) (pos_Y + 0.5f);
+	float radians = (tankangle * 3.14) / 180;
 
-		//check to see if the bullet is off the top of the screen
-		//and deactivate and move off screen
-		if((posRect.y < (0-posRect.h)) || (posRect.y >768) || (posRect.x <(0-posRect.w)) || (posRect.x >1024)){
-			Reset();
-		}
+	float move_x = speed * cos(radians);
+	float move_y = speed *sin(radians);
+
+	pos_X += (speed * move_x) *deltaTime;
+	pos_Y += (speed * move_y) *deltaTime;
+
+	//Update bullet posiiton with code to axount for precision loss
+	posRect.x = (int) (pos_X + 0.5f);
+	posRect.y = (int) (pos_Y + 0.5f);
+
+	//check to see if the bullet is off the top of the screen
+	//and deactivate and move off screen
+	if((posRect.y < (0-posRect.h)) || (posRect.y >768) || (posRect.x <(0-posRect.w)) || (posRect.x >1024)){
+		Reset();
+	}
 
 }

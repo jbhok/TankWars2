@@ -72,12 +72,15 @@ public:
 	//audio sound effect - CHUNK
 	Mix_Chunk *fire;
 
+	//add x and y
+	Sint16 Xvalue, Yvalue;
+
 	//players creatoin method using passed in balues for renderer player number path to the texture
 	//starting posinot x starting positno y
 	Tank(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, float x, float y);
 
 	//mathod to allow the player the move bia joystick axis
-	void OnControllerAxis(const SDL_ControllerAxisEvent event);
+	void OnControllerAxis(Sint16 X, Sint16 Y);
 
 	//method to allow the players interect with the joystick buttons
 	void OnControllerButton(const SDL_ControllerButtonEvent event);

@@ -51,10 +51,10 @@ Turret::Turret(SDL_Renderer *renderer, string filePath, string audioPath, float 
 	for(int i = 0; i <10; i++)
 	{
 		//creat the bullet and move offscreen out of the game play area
-		//TurretBullet tmpBullet(renderer, bulletPath, 500, 500);
+		TurretBullet tmpBullet(renderer, bulletPath, 500, 500);
 
 		//add to bulletlist
-		//bulletList.push_back(tmpBullet);
+		bulletList.push_back(tmpBullet);
 	}
 
 	//random null init
@@ -65,7 +65,7 @@ Turret::Turret(SDL_Renderer *renderer, string filePath, string audioPath, float 
 //tank draw mtehod
 void Turret::Draw(SDL_Renderer *renderer)
 {
-/*
+
 	//draw the enemies
 	for(int i = 0; i <bulletList.size(); i++)
 	{
@@ -76,7 +76,7 @@ void Turret::Draw(SDL_Renderer *renderer)
 			bulletList[i].Draw(renderer);
 		}
 	}
-*/
+
 	//draw the player texture using the cars texture and posRext
 	SDL_RenderCopy(renderer,tBase, NULL, &baseRect);
 
@@ -100,7 +100,7 @@ void Turret::Update(float deltaTime, SDL_Rect tankRect){
 			fireTime = SDL_GetTicks() + (rand() % 3 + 1) * 1000;
 		}
 
-		/*
+
 		//update the turrests vullets
 		for(int i = 0; i <bulletList.size(); i++)
 			{
@@ -110,14 +110,14 @@ void Turret::Update(float deltaTime, SDL_Rect tankRect){
 					//draw bullet
 					bulletList[i].Draw(renderer);
 				}
-			}*/
+			}
 }
 
 
 //create a bullet
 void Turret::CreateBullet()
 {
-	/*
+
 	//see if there is a bullet active to fire
 	for(int i = 0; i < bulletList.size(); i++)
 	{
@@ -145,5 +145,5 @@ void Turret::CreateBullet()
 			break;
 		}
 	}
-	*/
+
 }

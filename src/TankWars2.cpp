@@ -56,7 +56,7 @@ string audio_dir = currentWorkingDirectory + "/src/";
 #endif
 
 //main start *********************************************************************
-int main(){
+int main(int argc, char *argv[]){
 
 	// *****CREAT ETHE SDL WINDOW - START &&&&&&
 	//start SDL2
@@ -112,6 +112,16 @@ int main(){
 	//cREATE TURRET START*******************************************
 	Turret turret1 = Turret(renderer, 0, images_dir.c_str(), audio_dir.c_str(), 800.0f, 800.0f);
 
+	SDL_Texture *bkgd = IMG_LoadTexture(renderer, (images_dir + "bkgd.png").c_str());
+
+	SDL_Rect bkgdRect;
+
+	bkgdRect.x = 0;
+	bkgdRect.y = 0;
+	bkgdRect.w = 2048;
+	bkgdRect.h = 1536;
+
+	float X_pos = 0.0f, Y_pos = 0.0f;
 	// MAIN GAME LOOP START ************
 
 	while(!quit)
@@ -146,7 +156,7 @@ int main(){
 
 			case SDL_CONTROLLERAXISMOTION:
 
-				tank1.OnControllerAxis(e.caxis);
+				//tank1.OnControllerAxis(e.caxis);
 
 				break;
 
@@ -154,8 +164,61 @@ int main(){
 
 		}//POLL EVENT
 
+		//get values for both the x and y of the controller
+		const Sint16 Xvalue = SDL_GameControllerGetAxis(gGameController0, SDL_CONTROLLER_AXIS_LEFTX);
+		const Sint16 Yvalue = SDL_GameControllerGetAxis(gGameController0, SDL_CONTROLLER_AXIS_LEFTY);
+
+		//pass to player 1
+		tank1.OnControllerAxis(Xvalue, Yvalue);
+
 		//update player 1 tank************************************
 		tank1.Update(deltaTime);
+
+
+		//move background
+		if((tank1.posRect.x >= 1024 - tank1.posRect.w) && (tank1.Xvalue > 8000)){
+
+			//adjust position floats
+			X_pos -=(tank1.speed)*deltaTime;
+
+			if((bkgdRect.x > -1024)){
+				//update bullet position with code to account for precision loss
+				bkgdRect.x = (int)(X_pos + 0.5f);
+				//X_pos = bkgdRect.x;
+			}else{
+				X_pos = bkgdRect.x;
+			}
+		}
+		if((tank1.posRect.x <= 0) && (tank1.Xvalue < 8000)){
+
+			//adjust position floats
+			X_pos +=(tank1.speed)*deltaTime;
+
+			if((bkgdRect.x <0)){
+				//update bullet position with code to account for precision loss
+				bkgdRect.x = (int)(X_pos + 0.5f);
+				//X_pos = bkgdRect.x;
+			}else{
+				X_pos = bkgdRect.x;
+			}
+		}
+
+		if((tank1.posRect.y >= 768- tank1.posRect.h) && (tank1.Xvalue > 8000)){
+
+			//adjust position floats
+			Y_pos +=(tank1.speed)*deltaTime;
+
+			if((bkgdRect.y > -768)){
+				//update bullet position with code to account for precision loss
+				bkgdRect.y = (int)(Y_pos + 0.5f);
+				//X_pos = bkgdRect.x;
+			}else{
+				Y_pos = bkgdRect.y;
+			}
+		}
+
+
+
 
 		turret1.Update(deltaTime, tank1.posRect);
 
@@ -163,6 +226,8 @@ int main(){
 		//draw player 1 tank************************************
 		//claer the SDL RenderTarget
 		SDL_RenderClear(renderer);
+		//dtaw the bkgd
+		SDL_RenderCopy(renderer, bkgd, NULL, &bkgdRect);
 		//draw the tank
 		tank1.Draw(renderer);
 		//draw the tuuret

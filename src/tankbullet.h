@@ -52,5 +52,7 @@ public:
 	//bullet destrctuiong method
 	void Reset();
 
+	//buyllet start
+	void Start(SDL_Rect playerPos, SDL_Rect turretPos);
 
 };
