@@ -97,7 +97,7 @@ void Tank::Draw(SDL_Renderer *renderer)
 
 
 	//draw the player texture using the cars texture and posRext
-	SDL_RenderCopy(renderer, texture, NULL, &posRect, tankangle, &center, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(renderer, texture, NULL, &posRect, tankangle, &center, SDL_FLIP_NONE);
 }
 
 //tank update method
@@ -118,7 +118,7 @@ void Tank::Update(float deltaTime)
 		float radians = (tankangle * 3.14) / 180;
 
 		//get x and y
-		float move+x = speed * cos (radians);
+		float move_x = speed * cos (radians);
 		float move_y = speed * sin (radians);
 
 		//update flaots for precision loss

@@ -59,8 +59,38 @@ Turret::Turret(SDL_Renderer *renderer, string filePath, string audioPath, float 
 
 	//random null init
 	srand(time(NULL));
-};
 
+	//update the float values for movement
+	posB_X = baseRect.x;
+	posB_Y = baseRect.y;
+
+	posT_X = barrelRect.x;
+	posT_Y = barrelRect.y;
+
+}
+
+//tank moves the turret in x
+void Turret::TankMoveX(float tankSpeed, float deltaTime)
+{
+	posB_X = (tankSpeed) * deltaTime;
+	posT_X = (tankSpeed) * deltaTime;
+
+	//update bullet position with code to account for precision loss
+	baseRect.x = (int)(posB_X + 0.5f);
+	barrelRect.x = (int)(posT_X + 0.5f);
+}
+
+//tank moves the turret in x
+void Turret::TankMoveY(float tankSpeed, float deltaTime)
+{
+	posB_Y = (tankSpeed) * deltaTime;
+	posT_Y = (tankSpeed) * deltaTime;
+
+	//update bullet position with code to account for precision loss
+	baseRect.y = (int)(posB_Y + 0.5f);
+	barrelRect.y = (int)(posT_Y + 0.5f);
+
+}
 
 //tank draw mtehod
 void Turret::Draw(SDL_Renderer *renderer)
@@ -85,6 +115,7 @@ void Turret::Draw(SDL_Renderer *renderer)
 
 }
 
+
 //bullet update method
 void Turret::Update(float deltaTime, SDL_Rect tankRect){
 
@@ -95,7 +126,9 @@ void Turret::Update(float deltaTime, SDL_Rect tankRect){
 
 		if(SDL_GetTicks()> fireTime){
 
+			if(baseRect.x > 0 && baseRect.x < 1024 && baseRect.y > 0 && baseRect.y < 768){
 			CreateBullet(tankRect);
+			}
 
 			fireTime = SDL_GetTicks() + (rand() % 3 + 1) * 1000;
 		}
@@ -108,14 +141,14 @@ void Turret::Update(float deltaTime, SDL_Rect tankRect){
 				if(bulletList[i].active){
 
 					//draw bullet
-					bulletList[i].Draw(renderer);
+					bulletList[i].Update(deltaTime);
 				}
 			}
 }
 
 
 //create a bullet
-void Turret::CreateBullet()
+void Turret::CreateBullet(SDL_Rect target)
 {
 
 	//see if there is a bullet active to fire

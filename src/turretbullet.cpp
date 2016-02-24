@@ -10,7 +10,7 @@ TurretBullet::TurretBullet(SDL_Renderer *renderer, string filePath, float x, flo
 	speed = 800.0;
 
 	//loat the rexture to a suraface
-	texture = IMG_LoadTexture(filePath.c_str());
+	texture = IMG_LoadTexture(renderer, filePath.c_str());
 
 	//set the width and height of the bullets rectangle
 	//by querying the texture itself

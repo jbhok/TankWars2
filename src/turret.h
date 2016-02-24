@@ -43,10 +43,10 @@ public:
 	SDL_Texture *tBarrel;
 
 	//players SDL_Rect for the X, Y, W, and H of texture
-	SDL_Rect BaseRect;
+	SDL_Rect baseRect;
 
 	//players SDL_Rect for the X, Y, W, and H of texture
-	SDL_Rect BarrelRect;
+	SDL_Rect barrelRect;
 
 	//vars used to get the angelbetwen the turrests position and the tanks position
 	float x, y, turretangle;
@@ -76,5 +76,11 @@ public:
 
 	//create a bullet
 	void CreateBullet(SDL_Rect target);
+
+	void TankMoveX(float tankSpeed, float deltaTime);
+
+	void TankMoveY(float tankSpeed, float deltaTime);
+
+	float posB_X, posB_Y, posT_X, posT_Y;
 
 };

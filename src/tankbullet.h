@@ -40,6 +40,8 @@ public:
 	//bullet float position to prevent precision ;pss
 	float pos_X, pos_Y;
 
+	float tankangle;
+
 	//bullet creation method, requires the renderer, a path to the needed image, an x positon, a y position
 	TankBullet(SDL_Renderer *renderer, string filePath, float x, float y, int dirX, int dirY);
 

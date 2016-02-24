@@ -42,4 +42,13 @@ SDL_Point turret, player;
 //distance between the 2
 float distance;
 
+TurretBullet(SDL_Renderer *renderer, string filePath, float x, float y);
+
+void Start(SDL_Rect playerPos, SDL_Rect turretPos);
+
+void Reset();
+
+void Draw(SDL_Renderer * renderer);
+
+void Update(float deltaTime);
 };
